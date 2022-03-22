@@ -1,9 +1,5 @@
-const {
-    Builder,
-    By,
-    until,
-    WebElementCondition,
-} = require('selenium-webdriver');
+require('dotenv').config();
+const { Builder, By, until } = require('selenium-webdriver');
 const utils = require('./utils');
 
 const initDriver = async () => {
@@ -76,12 +72,11 @@ const coreLogic = async (driver) => {
 
 const startFromLogin = async () => {
     const driver = await initDriver();
-
     /* Login */
     const loginPage = 'https://poshmark.com/login';
     await driver.get(loginPage);
-    const username = 'lenvak';
-    const password = 'Sellmystuff3!';
+    const username = process.env.USERNAME;
+    const password = process.env.PASSWORD;
     await driver.findElement(By.id('login_form_username_email')).click();
     await driver
         .findElement(By.id('login_form_username_email'))
