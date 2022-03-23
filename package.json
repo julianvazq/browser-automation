@@ -2,11 +2,16 @@
   "name": "chrome-automation",
   "version": "1.0.0",
   "description": "",
+  "bin": "index.js",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "build": "pkg index.js",
+    "build": "pkg -o pm-auto-share -t node16-win-x64 index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "pkg": {
+    "targets": [ "node16-win-x64" ],
+    "outputPath": "dist"
   },
   "keywords": [],
   "author": "",

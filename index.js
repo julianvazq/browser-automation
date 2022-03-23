@@ -1,9 +1,12 @@
-require('dotenv').config();
 require('chromedriver');
 const { By, until } = require('selenium-webdriver');
 const { initDriver } = require('./driver/config');
 const utils = require('./utils/utils');
 const logger = require('./utils/logger');
+const env = require('dotenv').config({ path: './config/.env' });
+if (env.error) {
+    throw new Error('.env file not found.');
+}
 
 const coreLogic = async (driver) => {
     /* Open Closet */
@@ -41,13 +44,14 @@ const coreLogic = async (driver) => {
             const inventoryTagEl = await listing
                 .findElement(By.css('.inventory-tag__text'))
                 .catch(() => null);
-            // if (inventoryTagEl !== null) {
-            //     const text = await inventoryTagEl.getText();
-            //     if (['NOT FOR SALE', 'SOLD'].includes(text)) {
-            //         logger.info(`(${i}) ${title} skipped`);
-            //         continue;
-            //     }
-            // }
+            if (inventoryTagEl !== null) {
+                const text = await inventoryTagEl.getText();
+                if (['NOT FOR SALE', 'SOLD'].includes(text)) {
+                    logger.info(`SKIP: (${i}) ${title} - skipped`);
+                    i++;
+                    continue;
+                }
+            }
         } catch (error) {
             logger.error(`(${i}) Check Inventory Tag`);
             logger.errorDefault(error);
@@ -82,11 +86,10 @@ const coreLogic = async (driver) => {
                 "document.querySelector('.internal-share__link').click()"
             );
             logger.success(`(${i}) ${title} - shared`);
+            i++;
         } catch (error) {
             logger.error(`(${i}) ${title}- not shared`);
             logger.errorDefault(error);
-        } finally {
-            i++;
         }
     }
 };
